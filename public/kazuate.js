@@ -1,11 +1,12 @@
 var ws;
 
 function onLoad() {
-	setStatus('NOT CONNECTED', false);
+	setStatus('Connecting...', false);
+	doConnect();
 }
 
 function doConnect() {
-	var proto = location.protocol == 'https:' ? 'wss' : 'ws';
+	var proto = location.protocol === 'https:' ? 'wss' : 'ws';
 	var index = location.pathname.lastIndexOf('/');
 	var path = index > 0 ? location.pathname.substring(0, index + 1) : '/';
 	var url = proto + '://' + location.host + path + 'ws';
@@ -21,7 +22,7 @@ function doClose() {
 }
 
 function onKeyPress(event, func) {
-	if (event.keyCode == 13) {
+	if (event.keyCode === 13) {
 		func();
 		return false;
 	} else {
@@ -37,17 +38,24 @@ function doLogin() {
 	}
 }
 
+function setDisplay(id, flag) {
+	document.getElementById(id).style.display = flag ? 'inline' : 'none';
+}
+
 function setStatus(status, connected, msg) {
 	document.getElementById('lbl-status').textContent = status;
-	document.getElementById('btn-connect').style.display = connected ? 'none' : 'inline';
-	document.getElementById('btn-close').style.display = connected ? 'inline' : 'none';
+	setDisplay('btn-connect', ! connected);
+	setDisplay('btn-close', connected);
 
-	var list = document.getElementById('lst-players');
-	while (list.firstChild) { list.removeChild(list.firstChild); }
-	if (msg && msg.players) {
+	setDisplay('div-login', msg && msg.status === 'login');
+	setDisplay('div-players', msg && msg.status === 'idle');
+
+	if (msg && msg.status === 'idle') {
+		var list = document.getElementById('lst-players');
+		while (list.firstChild) { list.removeChild(list.firstChild); }
 		for (var i = 0; i < msg.players.length; i++) {
 			var p = msg.players[i];
-			if (p.id != msg.id && p.status == 'idle') {
+			if (p.id !== msg.id && p.status === 'idle') {
 				var item = document.createElement('li');
 				item.textContent = p.name;
 				list.appendChild(item);
@@ -57,22 +65,22 @@ function setStatus(status, connected, msg) {
 }
 
 function onOpen(event) {
-	setStatus('Connected', true);
+	setStatus('Please login.', true, { "status": "login" });
 }
 
 function onMessage(event) {
 	var msg = JSON.parse(event.data);
-	if (msg.status == 'login') {
-		setStatus('Connected', true, msg);
-	} else if (msg.status == 'idle') {
-		setStatus('Idle: ' + msg.name, true, msg);
+	if (msg.status === 'login') {
+		setStatus('Please login.', true, msg);
+	} else if (msg.status === 'idle') {
+		setStatus('Welcome, ' + msg.name + '!', true, msg);
 	}
 }
 
 function onClose(event) {
-	setStatus('Closed', false);
+	setStatus('Disconnected.', false);
 }
 
 function onError(event) {
-	alert('onerror');
+	setStatus('ERROR!!!', false);
 }

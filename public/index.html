@@ -7,16 +7,18 @@
   <body onload="onLoad();">
     <h1>Kazuate Game</h1>
     <p>
-      Status: <span id="lbl-status">-</span>
+      <span id="lbl-status"></span>
       <button id="btn-connect" onclick="doConnect();">Connect</button>
       <button id="btn-close" onclick="doClose();">Close</button>
     </p>
-    <p>
+    <div id="div-login">
       Name:
       <input type="text" id="txt-name" onkeypress="return onKeyPress(event, doLogin);">
       <button id="btn-login" onclick="doLogin();">Login</button>
-    </p>
-    <ul id="lst-players"></ul>
+    </div>
+    <div id="div-players">
+      <ul id="lst-players"></ul>
+    </div>
     <script type="text/javascript" src="kazuate.js"></script>
   </body>
 </html>
