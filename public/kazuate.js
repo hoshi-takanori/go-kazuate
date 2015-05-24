@@ -20,6 +20,23 @@ function doClose() {
 	ws.close();
 }
 
+function onKeyPress(event, func) {
+	if (event.keyCode == 13) {
+		func();
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function doLogin() {
+	var name = document.getElementById('txt-name').value.trim();
+	if (name.length > 0) {
+		var msg = { "name": name };
+		ws.send(JSON.stringify(msg));
+	}
+}
+
 function setStatus(status, connected) {
 	document.getElementById('lbl-status').textContent = status;
 	document.getElementById('btn-connect').style.display = connected ? 'none' : 'inline';
@@ -28,11 +45,11 @@ function setStatus(status, connected) {
 
 function onOpen(event) {
 	setStatus('Connected', true);
-	ws.send("connected");
+	//ws.send("connected");
 }
 
 function onMessage(event) {
-	alert('onmessage');
+	alert('onmessage: ' + event.data);
 }
 
 function onClose(event) {

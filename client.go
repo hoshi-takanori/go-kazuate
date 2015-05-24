@@ -25,14 +25,16 @@ func (c *Client) Start() {
 
 	println("Client", c.id, "Start")
 	for {
-		var message string
-		err := websocket.Message.Receive(c.ws, &message)
+		var m Message
+		err := websocket.JSON.Receive(c.ws, &m)
 		if err != nil {
 			println("Client", c.id, "Error", err.Error())
 			c.server.delCh <- c
 			return
 		} else {
-			println("Client", c.id, "Receive", message)
+			println("Client", c.id, "Receive: m.Name =", m.Name)
+			m.Id = c.id
+			c.server.msgCh <- &m
 		}
 	}
 }

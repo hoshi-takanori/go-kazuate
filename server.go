@@ -10,6 +10,7 @@ type Server struct {
 
 	addCh chan *Client
 	delCh chan *Client
+	msgCh chan *Message
 }
 
 func NewServer() *Server {
@@ -19,6 +20,7 @@ func NewServer() *Server {
 
 		addCh: make(chan *Client, 1),
 		delCh: make(chan *Client),
+		msgCh: make(chan *Message),
 	}
 }
 
@@ -33,7 +35,33 @@ func (s *Server) Start() {
 
 		case c := <-s.delCh:
 			delete(s.clients, c.id)
+
+		case m := <-s.msgCh:
+			c, ok := s.clients[m.Id]
+			if ok {
+				s.ProcessMessage(c, m)
+			}
 		}
+	}
+}
+
+func (s *Server) ProcessMessage(c *Client, m *Message) {
+	switch {
+	case c.status == statusLogin && m.Name != "":
+		c.status = statusIdle
+		c.name = m.Name
+		s.Broadcast()
+	}
+}
+
+func (s *Server) Broadcast() {
+	players := []Player{}
+	for _, c := range s.clients {
+		players = append(players, c.ToPlayer())
+	}
+	for _, c := range s.clients {
+		m := Message{Player: c.ToPlayer(), Players: players}
+		go websocket.JSON.Send(c.ws, m)
 	}
 }
 
