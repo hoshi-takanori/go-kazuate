@@ -5,26 +5,6 @@ import (
 	"testing"
 )
 
-func MarshalUnmarshal(name string, p interface{}, q interface{}) {
-	buf, err := json.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	println(name, "=", string(buf))
-
-	err = json.Unmarshal(buf, q)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func PrintPlayer(name string, p Player) {
-	println(name+".Id =", p.Id)
-	println(name+".Name =", p.Name)
-	println(name+".Status =", p.Status)
-	println(name+".Opponent =", p.Opponent)
-}
-
 func TestPlayer(t *testing.T) {
 	p := Player{Id: 123, Name: "abc", Status: "idle", Opponent: 456}
 	var q Player
@@ -46,4 +26,24 @@ func TestMessage(t *testing.T) {
 	println("len(n.Players) =", len(n.Players))
 	PrintPlayer("n.Players[0]", n.Players[0])
 	PrintPlayer("n.Players[1]", n.Players[1])
+}
+
+func MarshalUnmarshal(name string, p interface{}, q interface{}) {
+	buf, err := json.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	println(name, "=", string(buf))
+
+	err = json.Unmarshal(buf, q)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func PrintPlayer(name string, p Player) {
+	println(name+".Id =", p.Id)
+	println(name+".Name =", p.Name)
+	println(name+".Status =", p.Status)
+	println(name+".Opponent =", p.Opponent)
 }
