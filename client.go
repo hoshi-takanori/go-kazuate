@@ -7,30 +7,32 @@ import (
 type Client struct {
 	server *Server
 
-	ws *websocket.Conn
-	id int
+	ws     *websocket.Conn
+	id     int
+	name   string
+	status int
 
-	idCh chan int
+	startCh chan bool
 }
 
 func NewClient(server *Server, ws *websocket.Conn) *Client {
-	return &Client{server: server, ws: ws, idCh: make(chan int)}
+	return &Client{server: server, ws: ws, startCh: make(chan bool)}
 }
 
-func (client *Client) Start() {
-	client.id = <-client.idCh
-	close(client.idCh)
+func (c *Client) Start() {
+	<-c.startCh
+	close(c.startCh)
 
-	println("client", client.id, "Start")
+	println("Client", c.id, "Start")
 	for {
 		var message string
-		err := websocket.Message.Receive(client.ws, &message)
+		err := websocket.Message.Receive(c.ws, &message)
 		if err != nil {
-			println("client", client.id, "Error", err.Error())
-			client.server.delCh <- client
+			println("Client", c.id, "Error", err.Error())
+			c.server.delCh <- c
 			return
 		} else {
-			println("client", client.id, "Receive", message)
+			println("Client", c.id, "Receive", message)
 		}
 	}
 }

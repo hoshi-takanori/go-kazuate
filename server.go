@@ -22,24 +22,25 @@ func NewServer() *Server {
 	}
 }
 
-func (server *Server) Start() {
+func (s *Server) Start() {
 	for {
 		select {
-		case client := <-server.addCh:
-			server.nextId++
-			server.clients[server.nextId] = client
-			client.idCh <- server.nextId
+		case c := <-s.addCh:
+			s.nextId++
+			c.id = s.nextId
+			s.clients[c.id] = c
+			c.startCh <- true
 
-		case client := <-server.delCh:
-			delete(server.clients, client.id)
+		case c := <-s.delCh:
+			delete(s.clients, c.id)
 		}
 	}
 }
 
-func (server *Server) WebSocketHandler() websocket.Handler {
+func (s *Server) WebSocketHandler() websocket.Handler {
 	return func(ws *websocket.Conn) {
-		client := NewClient(server, ws)
-		server.addCh <- client
-		client.Start()
+		c := NewClient(s, ws)
+		s.addCh <- c
+		c.Start()
 	}
 }
