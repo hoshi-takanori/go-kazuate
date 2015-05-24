@@ -24,7 +24,11 @@ func TestPlayer(t *testing.T) {
 }
 
 func TestMessage(t *testing.T) {
-	m := Message{Player{Id: 123, Name: "abc", Status: "idle"}, []Player{}}
+	m := Message{
+		Command: "test",
+		Player:  Player{Id: 123, Name: "abc", Status: "idle"},
+		Players: []Player{},
+	}
 	m.Players = append(m.Players, Player{Id: 456, Name: "def", Status: "login"})
 	m.Players = append(m.Players, Player{Id: 789, Name: "xyz", Status: "unknown"})
 	buf, err := json.Marshal(m)
@@ -38,6 +42,7 @@ func TestMessage(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	println("n.Command =", n.Command)
 	println("n.Id =", n.Id)
 	println("n.Name =", n.Name)
 	println("n.Status =", n.Status)

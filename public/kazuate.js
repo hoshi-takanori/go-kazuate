@@ -32,24 +32,41 @@ function onKeyPress(event, func) {
 function doLogin() {
 	var name = document.getElementById('txt-name').value.trim();
 	if (name.length > 0) {
-		var msg = { "name": name };
+		var msg = { "command": "login", "name": name };
 		ws.send(JSON.stringify(msg));
 	}
 }
 
-function setStatus(status, connected) {
+function setStatus(status, connected, msg) {
 	document.getElementById('lbl-status').textContent = status;
 	document.getElementById('btn-connect').style.display = connected ? 'none' : 'inline';
 	document.getElementById('btn-close').style.display = connected ? 'inline' : 'none';
+
+	var list = document.getElementById('lst-players');
+	while (list.firstChild) { list.removeChild(list.firstChild); }
+	if (msg && msg.players) {
+		for (var i = 0; i < msg.players.length; i++) {
+			var p = msg.players[i];
+			if (p.id != msg.id && p.status == 'idle') {
+				var item = document.createElement('li');
+				item.textContent = p.name;
+				list.appendChild(item);
+			}
+		}
+	}
 }
 
 function onOpen(event) {
 	setStatus('Connected', true);
-	//ws.send("connected");
 }
 
 function onMessage(event) {
-	alert('onmessage: ' + event.data);
+	var msg = JSON.parse(event.data);
+	if (msg.status == 'login') {
+		setStatus('Connected', true, msg);
+	} else if (msg.status == 'idle') {
+		setStatus('Idle: ' + msg.name, true, msg);
+	}
 }
 
 function onClose(event) {

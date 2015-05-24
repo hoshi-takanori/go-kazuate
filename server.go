@@ -35,6 +35,7 @@ func (s *Server) Start() {
 
 		case c := <-s.delCh:
 			delete(s.clients, c.id)
+			s.Broadcast()
 
 		case m := <-s.msgCh:
 			c, ok := s.clients[m.Id]
@@ -47,7 +48,7 @@ func (s *Server) Start() {
 
 func (s *Server) ProcessMessage(c *Client, m *Message) {
 	switch {
-	case c.status == statusLogin && m.Name != "":
+	case c.status == statusLogin && m.Command == "login" && m.Name != "":
 		c.status = statusIdle
 		c.name = m.Name
 		s.Broadcast()
