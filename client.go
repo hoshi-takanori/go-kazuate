@@ -7,10 +7,11 @@ import (
 type Client struct {
 	server *Server
 
-	ws     *websocket.Conn
-	id     int
-	name   string
-	status int
+	ws       *websocket.Conn
+	id       int
+	name     string
+	status   int
+	opponent int
 
 	startCh chan bool
 }
@@ -32,7 +33,7 @@ func (c *Client) Start() {
 			c.server.delCh <- c
 			return
 		} else {
-			println("Client", c.id, "Receive: m.Name =", m.Name)
+			println("Client", c.id, "Receive: m.Command =", m.Command)
 			m.Id = c.id
 			c.server.msgCh <- &m
 		}

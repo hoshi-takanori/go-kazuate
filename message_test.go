@@ -5,22 +5,31 @@ import (
 	"testing"
 )
 
-func TestPlayer(t *testing.T) {
-	p := Player{Id: 123, Name: "abc", Status: "idle"}
+func MarshalUnmarshal(name string, p interface{}, q interface{}) {
 	buf, err := json.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	println("p =", string(buf))
+	println(name, "=", string(buf))
 
-	var q Player
-	err = json.Unmarshal(buf, &q)
+	err = json.Unmarshal(buf, q)
 	if err != nil {
 		panic(err)
 	}
-	println("q.Id =", q.Id)
-	println("q.Name =", q.Name)
-	println("q.Status =", q.Status)
+}
+
+func PrintPlayer(name string, p Player) {
+	println(name+".Id =", p.Id)
+	println(name+".Name =", p.Name)
+	println(name+".Status =", p.Status)
+	println(name+".Opponent =", p.Opponent)
+}
+
+func TestPlayer(t *testing.T) {
+	p := Player{Id: 123, Name: "abc", Status: "idle", Opponent: 456}
+	var q Player
+	MarshalUnmarshal("p", p, &q)
+	PrintPlayer("q", q)
 }
 
 func TestMessage(t *testing.T) {
@@ -31,26 +40,10 @@ func TestMessage(t *testing.T) {
 	}
 	m.Players = append(m.Players, Player{Id: 456, Name: "def", Status: "login"})
 	m.Players = append(m.Players, Player{Id: 789, Name: "xyz", Status: "unknown"})
-	buf, err := json.Marshal(m)
-	if err != nil {
-		panic(err)
-	}
-	println("m =", string(buf))
-
 	var n Message
-	err = json.Unmarshal(buf, &n)
-	if err != nil {
-		panic(err)
-	}
-	println("n.Command =", n.Command)
-	println("n.Id =", n.Id)
-	println("n.Name =", n.Name)
-	println("n.Status =", n.Status)
+	MarshalUnmarshal("m", m, &n)
+	PrintPlayer("n", n.Player)
 	println("len(n.Players) =", len(n.Players))
-	println("n.Players[0].Id =", n.Players[0].Id)
-	println("n.Players[0].Name =", n.Players[0].Name)
-	println("n.Players[0].Status =", n.Players[0].Status)
-	println("n.Players[1].Id =", n.Players[1].Id)
-	println("n.Players[1].Name =", n.Players[1].Name)
-	println("n.Players[1].Status =", n.Players[1].Status)
+	PrintPlayer("n.Players[0]", n.Players[0])
+	PrintPlayer("n.Players[1]", n.Players[1])
 }

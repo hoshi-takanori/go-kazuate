@@ -52,6 +52,18 @@ func (s *Server) ProcessMessage(c *Client, m *Message) {
 		c.status = statusIdle
 		c.name = m.Name
 		s.Broadcast()
+
+	case c.status == statusIdle && m.Command == "play":
+		o, ok := s.clients[m.Opponent]
+		if ok {
+			c.opponent = o.id
+			println("c.id =", c.id, ", o.id =", o.id)
+			if o.opponent == c.id {
+				c.status = statusPlay
+				o.status = statusPlay
+			}
+			s.Broadcast()
+		}
 	}
 }
 
