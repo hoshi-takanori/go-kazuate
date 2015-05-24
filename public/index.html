@@ -20,6 +20,12 @@
       <label>Choose opponent:</label>
       <ul id="lst-players"></ul>
     </div>
+    <div id="div-number">
+      <label>Your number:</label>
+      <input type="text" id="txt-number" onkeypress="return onKeyPress(event, doNumber);">
+      <button id="btn-random" onclick="doRandom();">Random</button>
+      <button id="btn-number" onclick="doNumber();">OK</button>
+    </div>
     <script type="text/javascript" src="kazuate.js"></script>
   </body>
 </html>

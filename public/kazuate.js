@@ -38,8 +38,47 @@ function doLogin() {
 	}
 }
 
+function onItemClick() {
+	var msg = { "command": "opponent", "opponent": this.id };
+	ws.send(JSON.stringify(msg));
+}
+
+function doRandom() {
+	var a = Math.floor(Math.random() * 10);
+	var b, c;
+	do {
+		b = Math.floor(Math.random() * 10);
+	} while (b == a);
+	do {
+		c = Math.floor(Math.random() * 10);
+	} while (c == a || c == b);
+	document.getElementById('txt-number').value = '' + a + b + c;
+}
+
+function doNumber() {
+	var num = document.getElementById('txt-number').value.trim();
+	if (num.length == 3) {
+		var a = num.charCodeAt(0) - 48;
+		var b = num.charCodeAt(1) - 48;
+		var c = num.charCodeAt(2) - 48;
+		if (a >= 0 && a < 10 && b >= 0 && b < 10 && c >= 0 && c < 10 &&
+				a != b && b != c && c != a) {
+			var msg = { "command": "number", "number": a * 100 + b * 10 + c };
+			ws.send(JSON.stringify(msg));
+		} else {
+			alert('Duplicate digits.');
+		}
+	} else {
+		alert('Bad length.');
+	}
+}
+
 function setDisplay(id, flag) {
 	document.getElementById(id).style.display = flag ? 'inline' : 'none';
+}
+
+function setEnabled(id, flag) {
+	document.getElementById(id).disabled = ! flag;
 }
 
 function setStatus(status, connected, msg) {
@@ -49,6 +88,10 @@ function setStatus(status, connected, msg) {
 
 	setDisplay('div-login', msg && msg.status === 'login');
 	setDisplay('div-players', msg && msg.status === 'idle');
+	setDisplay('div-number', msg && (msg.status === 'num1' || msg.status === 'num2'));
+	setEnabled('txt-number', msg && msg.status === 'num1');
+	setEnabled('btn-random', msg && msg.status === 'num1');
+	setEnabled('btn-number', msg && msg.status === 'num1');
 
 	if (msg && msg.status === 'idle') {
 		var list = document.getElementById('lst-players');
@@ -74,11 +117,6 @@ function setStatus(status, connected, msg) {
 	}
 }
 
-function onItemClick() {
-	var msg = { "command": "play", "opponent": this.id };
-	ws.send(JSON.stringify(msg));
-}
-
 function onOpen(event) {
 	setStatus('Please login.', true, { "status": "login" });
 }
@@ -89,7 +127,7 @@ function onMessage(event) {
 		setStatus('Please login.', true, msg);
 	} else if (msg.status === 'idle') {
 		setStatus('Welcome, ' + msg.name + '!', true, msg);
-	} else if (msg.status === 'play') {
+	} else if (msg.status === 'num1' || msg.status === 'num2') {
 		setStatus(msg.name + ' vs ' + msg.opponent, true, msg);
 	} else {
 		setStatus('Unknown status.', true);

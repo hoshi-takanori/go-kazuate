@@ -3,10 +3,11 @@ package main
 const (
 	statusLogin = iota
 	statusIdle
-	statusPlay
+	statusNumber1
+	statusNumber2
 )
 
-var statusNames = [...]string{"login", "idle", "play"}
+var statusNames = [...]string{"login", "idle", "num1", "num2"}
 
 type Player struct {
 	Id       int    `json:"id"`
@@ -17,6 +18,7 @@ type Player struct {
 
 type Message struct {
 	Command string `json:"command"`
+	Number  int    `json:"number"`
 	Player
 	Players []Player `json:"players"`
 }
