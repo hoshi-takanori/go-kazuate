@@ -85,13 +85,13 @@ func (s *Server) Broadcast() {
 	}
 	for _, c := range s.clients {
 		m := Message{Player: c.ToPlayer(), Players: players}
-		go websocket.JSON.Send(c.ws, m)
+		go c.ws.Send(m)
 	}
 }
 
 func (s *Server) WebSocketHandler() websocket.Handler {
 	return func(ws *websocket.Conn) {
-		c := NewClient(s, ws)
+		c := NewClient(s, WSConn{ws})
 		s.addCh <- c
 		c.Start()
 	}

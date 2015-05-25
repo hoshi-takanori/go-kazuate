@@ -1,3 +1,5 @@
+// +build message_test
+
 package main
 
 import (
