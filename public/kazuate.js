@@ -65,6 +65,7 @@ function doNumber() {
 				a != b && b != c && c != a) {
 			var msg = { "command": "number", "number": a * 100 + b * 10 + c };
 			ws.send(JSON.stringify(msg));
+			document.getElementById('txt-number').value = '';
 		} else {
 			alert('Duplicate digits.');
 		}

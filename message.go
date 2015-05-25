@@ -23,8 +23,11 @@ type Message struct {
 	Number  int    `json:"number"`
 	OppName string `json:"opp_name"`
 	Message string `json:"message"`
+	Turn    bool   `json:"turn"`
 	Player
-	Players []Player `json:"players"`
+	Players  []Player `json:"players"`
+	Answers1 []Answer `json:"answers1"`
+	Answers2 []Answer `json:"answers2"`
 }
 
 func NewPlayer(c *Client) Player {
@@ -50,6 +53,11 @@ func NewMessage(c *Client, ps []Player) Message {
 	m := Message{Player: NewPlayer(c), OppName: c.oppName, Message: c.message}
 	if c.status == statusIdle {
 		m.Players = ps
+	}
+	if c.game != nil {
+		m.Turn = c.game.Turn(c)
+		m.Answers1 = c.game.Answers(c)
+		m.Answers2 = c.game.Answers(c.game.Opponent(c))
 	}
 	return m
 }

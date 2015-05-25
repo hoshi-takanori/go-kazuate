@@ -92,6 +92,7 @@ func (s *Server) ProcessMessage(c *Client, m *Message) {
 
 	case c.status == statusDone && m.Command == "done":
 		c.status = statusIdle
+		c.message = ""
 		s.Broadcast()
 	}
 }
