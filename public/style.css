@@ -16,9 +16,9 @@ ul#lst-players li {
 }
 
 ul#lst-players li.choice {
-  background: lightblue;
+  background: lightskyblue;
 }
 
 ul#lst-players li.chosen {
-  background: plum;
+  background: lightsteelblue;
 }

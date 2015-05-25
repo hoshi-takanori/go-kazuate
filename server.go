@@ -62,17 +62,26 @@ func (s *Server) ProcessMessage(c *Client, m *Message) {
 			if o.opponent == c.id {
 				c.status = statusNumber1
 				o.status = statusNumber1
+				g := NewGame(c, o)
+				c.game = g
+				o.game = g
 			}
 			s.Broadcast()
 		}
 
 	case c.status == statusNumber1 && m.Command == "number":
+		g := c.game
 		x := m.Number / 100
 		y := m.Number / 10 % 10
 		z := m.Number % 10
 		println("x =", x, ", y =", y, ", z =", z)
-		if x != y && y != z && z != x {
-			c.status = statusNumber2
+		if g != nil && x != y && y != z && z != x {
+			if g.player1.status == statusNumber2 || g.player2.status == statusNumber2 {
+				g.player1.status = statusPlay
+				g.player2.status = statusPlay
+			} else {
+				c.status = statusNumber2
+			}
 			c.number = m.Number
 			s.Broadcast()
 		}

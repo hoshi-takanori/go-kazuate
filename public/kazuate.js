@@ -92,6 +92,7 @@ function setStatus(status, connected, msg) {
 	setEnabled('txt-number', msg && msg.status === 'num1');
 	setEnabled('btn-random', msg && msg.status === 'num1');
 	setEnabled('btn-number', msg && msg.status === 'num1');
+	setDisplay('div-play', msg && msg.status === 'play');
 
 	if (msg && msg.status === 'idle') {
 		var list = document.getElementById('lst-players');
@@ -127,7 +128,7 @@ function onMessage(event) {
 		setStatus('Please login.', true, msg);
 	} else if (msg.status === 'idle') {
 		setStatus('Welcome, ' + msg.name + '!', true, msg);
-	} else if (msg.status === 'num1' || msg.status === 'num2') {
+	} else if (msg.status === 'num1' || msg.status === 'num2' || msg.status == 'play') {
 		setStatus(msg.name + ' vs ' + msg.opp_name, true, msg);
 	} else {
 		setStatus('Unknown status.', true);

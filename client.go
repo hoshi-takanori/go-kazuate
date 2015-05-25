@@ -31,6 +31,7 @@ type Client struct {
 	opponent int
 	oppName  string
 	number   int
+	game     *Game
 
 	startCh chan bool
 }

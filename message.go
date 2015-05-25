@@ -5,9 +5,10 @@ const (
 	statusIdle
 	statusNumber1
 	statusNumber2
+	statusPlay
 )
 
-var statusNames = [...]string{"login", "idle", "num1", "num2"}
+var statusNames = [...]string{"login", "idle", "num1", "num2", "play"}
 
 type Player struct {
 	Id       int    `json:"id"`
