@@ -57,6 +57,7 @@ func (s *Server) ProcessMessage(c *Client, m *Message) {
 		o, ok := s.clients[m.Opponent]
 		if ok {
 			c.opponent = o.id
+			c.oppName = o.name
 			println("c.id =", c.id, ", o.id =", o.id)
 			if o.opponent == c.id {
 				c.status = statusNumber1
@@ -84,7 +85,7 @@ func (s *Server) Broadcast() {
 		players = append(players, c.ToPlayer())
 	}
 	for _, c := range s.clients {
-		m := Message{Player: c.ToPlayer(), Players: players}
+		m := Message{Player: c.ToPlayer(), OppName: c.oppName, Players: players}
 		go c.ws.Send(m)
 	}
 }

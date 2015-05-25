@@ -29,6 +29,7 @@ type Client struct {
 	name     string
 	status   int
 	opponent int
+	oppName  string
 	number   int
 
 	startCh chan bool

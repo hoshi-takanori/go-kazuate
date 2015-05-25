@@ -128,7 +128,7 @@ function onMessage(event) {
 	} else if (msg.status === 'idle') {
 		setStatus('Welcome, ' + msg.name + '!', true, msg);
 	} else if (msg.status === 'num1' || msg.status === 'num2') {
-		setStatus(msg.name + ' vs ' + msg.opponent, true, msg);
+		setStatus(msg.name + ' vs ' + msg.opp_name, true, msg);
 	} else {
 		setStatus('Unknown status.', true);
 	}

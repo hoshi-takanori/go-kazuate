@@ -19,6 +19,7 @@ type Player struct {
 type Message struct {
 	Command string `json:"command"`
 	Number  int    `json:"number"`
+	OppName string `json:"opp_name"`
 	Player
 	Players []Player `json:"players"`
 }
