@@ -34,6 +34,10 @@ func (s *Server) Start() {
 			c.startCh <- true
 
 		case c := <-s.delCh:
+			if c.game != nil {
+				o := c.game.Opponent(c)
+				o.SetDone("Opponent has been disconnected.")
+			}
 			delete(s.clients, c.id)
 			s.Broadcast()
 
@@ -85,16 +89,17 @@ func (s *Server) ProcessMessage(c *Client, m *Message) {
 			c.number = m.Number
 			s.Broadcast()
 		}
+
+	case c.status == statusDone && m.Command == "done":
+		c.status = statusIdle
+		s.Broadcast()
 	}
 }
 
 func (s *Server) Broadcast() {
-	players := []Player{}
+	ps := NewPlayers(s.clients)
 	for _, c := range s.clients {
-		players = append(players, c.ToPlayer())
-	}
-	for _, c := range s.clients {
-		m := Message{Player: c.ToPlayer(), OppName: c.oppName, Players: players}
+		m := NewMessage(c, ps)
 		go c.ws.Send(m)
 	}
 }

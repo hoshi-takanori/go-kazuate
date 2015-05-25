@@ -32,6 +32,7 @@ type Client struct {
 	oppName  string
 	number   int
 	game     *Game
+	message  string
 
 	startCh chan bool
 }
@@ -58,4 +59,13 @@ func (c *Client) Start() {
 			c.server.msgCh <- &m
 		}
 	}
+}
+
+func (c *Client) SetDone(msg string) {
+	c.status = statusDone
+	c.opponent = 0
+	c.oppName = ""
+	c.number = 0
+	c.game = nil
+	c.message = msg
 }

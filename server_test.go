@@ -67,4 +67,14 @@ func TestServer(t *testing.T) {
 	s.msgCh <- &Message{Command: "number", Number: 456, Player: Player{Id: c2.id}}
 	runtime.Gosched()
 	println()
+
+	println("player1 disconnect")
+	s.delCh <- c1
+	runtime.Gosched()
+	println()
+
+	println("player2 disconnect")
+	s.delCh <- c2
+	runtime.Gosched()
+	println()
 }

@@ -73,6 +73,11 @@ function doNumber() {
 	}
 }
 
+function doMessage() {
+	var msg = { "command": "done" };
+	ws.send(JSON.stringify(msg));
+}
+
 function setDisplay(id, flag) {
 	document.getElementById(id).style.display = flag ? 'inline' : 'none';
 }
@@ -93,6 +98,7 @@ function setStatus(status, connected, msg) {
 	setEnabled('btn-random', msg && msg.status === 'num1');
 	setEnabled('btn-number', msg && msg.status === 'num1');
 	setDisplay('div-play', msg && msg.status === 'play');
+	setDisplay('div-done', msg && msg.status === 'done');
 
 	if (msg && msg.status === 'idle') {
 		var list = document.getElementById('lst-players');
@@ -116,6 +122,10 @@ function setStatus(status, connected, msg) {
 			list.appendChild(item);
 		}
 	}
+
+	if (msg && msg.status === 'done') {
+		document.getElementById('lbl-message').textContent = msg.message;
+	}
 }
 
 function onOpen(event) {
@@ -130,6 +140,8 @@ function onMessage(event) {
 		setStatus('Welcome, ' + msg.name + '!', true, msg);
 	} else if (msg.status === 'num1' || msg.status === 'num2' || msg.status == 'play') {
 		setStatus(msg.name + ' vs ' + msg.opp_name, true, msg);
+	} else if (msg.status === 'done') {
+		setStatus('Done.', true, msg);
 	} else {
 		setStatus('Unknown status.', true);
 	}
