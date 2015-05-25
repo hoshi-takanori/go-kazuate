@@ -68,6 +68,23 @@ func TestServer(t *testing.T) {
 	runtime.Gosched()
 	println()
 
+	g := c1.game
+	if g == nil {
+		panic("no game")
+	}
+
+	var c *Client
+	if g.Turn(c1) {
+		c = c1
+	} else {
+		c = c2
+	}
+
+	println("player", c.id, "answer")
+	s.msgCh <- &Message{Command: "answer", Number: 789, Player: Player{Id: c.id}}
+	runtime.Gosched()
+	println()
+
 	println("player1 disconnect")
 	s.delCh <- c1
 	runtime.Gosched()

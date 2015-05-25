@@ -61,6 +61,17 @@ func (c *Client) Start() {
 	}
 }
 
+func (c *Client) SetNumber(num int) {
+	o := c.game.Opponent(c)
+	if o.status == statusNumber2 {
+		c.status = statusPlay
+		o.status = statusPlay
+	} else {
+		c.status = statusNumber2
+	}
+	c.number = num
+}
+
 func (c *Client) SetDone(msg string) {
 	c.status = statusDone
 	c.opponent = 0

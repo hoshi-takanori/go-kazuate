@@ -24,6 +24,29 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+func GoodNumber(num int) bool {
+	n := [...]int{num / 100, num / 10 % 10, num % 10}
+	return n[0] != n[1] && n[1] != n[2] && n[2] != n[0]
+}
+
+func NewAnswer(ans, num int) Answer {
+	a := Answer{Number: ans}
+	m := [...]int{ans / 100, ans / 10 % 10, ans % 10}
+	n := [...]int{num / 100, num / 10 % 10, num % 10}
+	for i, x := range m {
+		if x == n[i] {
+			a.Exact++
+		} else {
+			for _, y := range n {
+				if x == y {
+					a.Near++
+				}
+			}
+		}
+	}
+	return a
+}
+
 func NewGame(p1, p2 *Client) *Game {
 	return &Game{
 		player1:  p1,
@@ -56,4 +79,14 @@ func (g *Game) Answers(c *Client) []Answer {
 	} else {
 		return g.answers2
 	}
+}
+
+func (g *Game) AddAnswer(c *Client, ans int) {
+	a := NewAnswer(ans, g.Opponent(c).number)
+	if c == g.player1 {
+		g.answers1 = append(g.answers1, a)
+	} else {
+		g.answers2 = append(g.answers2, a)
+	}
+	g.turn = !g.turn
 }
